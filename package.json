@@ -1,0 +1,8 @@
+{
+  "name": "agentlens",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter dashboard dev",
+    "build": "pnpm -r build"
+  }
+}

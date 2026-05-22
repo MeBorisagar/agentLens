@@ -1,0 +1,14 @@
+# for dashboard
+
+cd apps/dashboard
+pnpm dev
+
+
+# for fast api
+cd apps/api
+uv run uvicorn app.main:app --reload --port 8001
+
+
+# docker 
+
+docker compose up -d

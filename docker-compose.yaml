@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: agentlens-postgres
+
+    restart: always
+
+    environment:
+      POSTGRES_USER: agentlens
+      POSTGRES_PASSWORD: agentlens
+      POSTGRES_DB: agentlens
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
