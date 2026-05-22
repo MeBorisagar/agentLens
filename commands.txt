@@ -12,3 +12,7 @@ uv run uvicorn app.main:app --reload --port 8001
 # docker 
 
 docker compose up -d
+
+
+# db
+docker exec -it agentlens-postgres psql -U agentlens -d agentlens
