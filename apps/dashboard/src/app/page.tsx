@@ -5,14 +5,14 @@ export default async function HomePage() {
   const traces = await getTraces();
 
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
+    <main className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
       <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-5xl font-bold tracking-tight">
             AgentLens
           </h1>
 
-          <p className="text-gray-500 mt-2">
+          <p className="text-zinc-400 mt-2">
             AI Agent Observability Dashboard
           </p>
         </div>

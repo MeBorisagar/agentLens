@@ -6,3 +6,13 @@ export async function getTraces(): Promise<Trace[]> {
 
   return response.data;
 }
+
+export async function getTrace(
+  traceId: string
+): Promise<Trace> {
+  const response = await api.get(
+    `/traces/${traceId}`
+  );
+
+  return response.data;
+}
