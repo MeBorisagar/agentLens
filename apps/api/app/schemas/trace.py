@@ -24,3 +24,34 @@ class TraceCreate(BaseModel):
     end_time: datetime | None = None
 
     events: list[TraceEventCreate]
+
+
+
+class TraceEventResponse(BaseModel):
+    id: UUID
+    event_type: str
+    step_number: int
+    payload: dict[str, Any]
+    latency_ms: int | None
+
+    class Config:
+        from_attributes = True
+
+
+class TraceResponse(BaseModel):
+    id: UUID
+    agent_name: str | None
+    status: str
+
+    total_tokens: int
+    total_cost: float
+
+    start_time: datetime
+    end_time: datetime | None
+
+    created_at: datetime
+
+    events: list[TraceEventResponse] = []
+
+    class Config:
+        from_attributes = True

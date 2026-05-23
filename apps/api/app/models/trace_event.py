@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
-
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 
@@ -48,4 +48,9 @@ class TraceEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
         default=datetime.now(timezone.utc),
+    )
+
+    trace = relationship(
+    "Trace",
+    back_populates="events",
     )

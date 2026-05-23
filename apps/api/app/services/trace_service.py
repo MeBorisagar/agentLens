@@ -6,6 +6,8 @@ from app.models.trace import Trace
 from app.models.trace_event import TraceEvent
 from app.schemas.trace import TraceCreate
 
+from sqlalchemy import desc
+from sqlalchemy.orm import joinedload
 
 def create_trace(db: Session, trace_data: TraceCreate):
     trace = Trace(
@@ -36,3 +38,19 @@ def create_trace(db: Session, trace_data: TraceCreate):
     db.commit()
 
     return trace
+
+def get_traces(db: Session):
+    return (
+        db.query(Trace)
+        .order_by(desc(Trace.created_at))
+        .all()
+    )
+
+
+def get_trace_by_id(db: Session, trace_id: str):
+    return (
+        db.query(Trace)
+        .options(joinedload(Trace.events))
+        .filter(Trace.id == trace_id)
+        .first()
+    )

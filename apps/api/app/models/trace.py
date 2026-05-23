@@ -1,10 +1,10 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import String, Integer, DateTime, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
-
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 
@@ -54,5 +54,11 @@ class Trace(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=datetime.now(timezone.utc),
+    )
+
+    events = relationship(
+    "TraceEvent",
+    back_populates="trace",
+    cascade="all, delete-orphan",
     )
