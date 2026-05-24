@@ -14,5 +14,11 @@ export async function getTrace(
     `/traces/${traceId}`
   );
 
-  return response.data;
+  return {
+  ...response.data,
+  events: response.data.events.sort(
+    (a: any, b: any) =>
+      a.step_number - b.step_number
+  ),
+};
 }

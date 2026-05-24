@@ -1,4 +1,5 @@
 import { getTrace } from "@/lib/traces";
+import { TimelineEvent } from "@/components/timeline-event";
 
 interface Props {
   params: Promise<{
@@ -61,48 +62,39 @@ export default async function TraceDetailPage({
 
         </div>
 
-        <div className="space-y-4">
+        <div className="mt-10">
 
-          {trace.events.map((event) => (
-            <div
-              key={event.id}
-              className="bg-zinc-900 border border-zinc-800 rounded-xl p-5"
-            >
+  <div className="mb-6">
+    <h2 className="text-2xl font-semibold">
+      Execution Timeline
+    </h2>
 
-              <div className="flex items-center justify-between">
+    <p className="text-zinc-400 mt-1">
+      Visual trace of the agent execution
+    </p>
+  </div>
 
-                <div>
-                  <h2 className="font-semibold">
-                    {event.event_type}
-                  </h2>
+  <div>
 
-                  <p className="text-sm text-gray-500">
-                    Step {event.step_number}
-                  </p>
-                </div>
+    {trace.events.length === 0 ? (
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-8 text-center text-zinc-400">
+        No events found for this trace.
+      </div>
+    ) : (
+      trace.events.map((event, index) => (
+        <TimelineEvent
+          key={event.id}
+          event={event}
+          isLast={
+            index === trace.events.length - 1
+          }
+        />
+      ))
+    )}
 
-                {event.latency_ms && (
-                  <div className="text-sm font-medium text-blue-600">
-                    {event.latency_ms} ms
-                  </div>
-                )}
+  </div>
 
-              </div>
-
-              <div className="mt-4">
-                <pre className="bg-zinc-950 border border-zinc-800 rounded-lg p-4 overflow-auto text-sm text-zinc-300">
-                  {JSON.stringify(
-                    event.payload,
-                    null,
-                    2
-                  )}
-                </pre>
-              </div>
-
-            </div>
-          ))}
-
-        </div>
+</div>
 
       </div>
     </main>
