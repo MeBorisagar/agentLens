@@ -32,7 +32,15 @@ export default async function TraceDetailPage({
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
             <p className="text-sm text-zinc-400">
-              Status
+             <div
+  className={`inline-flex px-3 py-1 rounded-full text-sm border ${
+    trace.status === "completed"
+      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+      : "bg-red-500/10 text-red-400 border-red-500/20"
+  }`}
+>
+  {trace.status}
+</div>
             </p>
 
             <p className="font-semibold mt-1">
