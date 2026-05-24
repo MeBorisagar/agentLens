@@ -3,19 +3,22 @@ import { TraceEvent } from "@/types/trace";
 import { getEventIcon } from "@/lib/event-icons";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-
+import { getLatencyWidth } from "@/lib/latency";
 import { getEventStyles } from "@/lib/event-styles";
-
 
 
 interface Props {
   event: TraceEvent;
   isLast?: boolean;
+
+  maxLatency: number;
 }
+
 
 export function TimelineEvent({
   event,
   isLast,
+  maxLatency,
 }: Props) {
 
     const [expanded, setExpanded] =
@@ -24,6 +27,13 @@ export function TimelineEvent({
   const styles = getEventStyles(
     event.event_type
   );
+
+  const latencyWidth = event.latency_ms
+  ? getLatencyWidth(
+      event.latency_ms,
+      maxLatency
+    )
+  : 0;
 
   const Icon = getEventIcon(
     event.event_type
@@ -62,15 +72,49 @@ export function TimelineEvent({
                 Step {event.step_number}
               </p>
             </div>
-
+ {event.latency_ms &&
+    event.latency_ms > 1000 && (
+      <div className="mt-2 inline-flex px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+        Slow execution step
+      </div>
+  )}
           
             <div className="flex items-center gap-3">
 
   {event.latency_ms && (
-    <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm">
-      {event.latency_ms} ms
+  <div className="min-w-[180px]">
+
+    <div className="flex items-center justify-between mb-1">
+
+      <span className="text-xs text-zinc-400">
+        Latency
+      </span>
+
+      <span className="text-xs text-blue-400 font-medium">
+        {event.latency_ms} ms
+      </span>
+
     </div>
-  )}
+
+    <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
+
+      <div
+        className={`h-full rounded-full ${
+          event.latency_ms > 1000
+            ? "bg-red-500"
+            : event.latency_ms > 500
+            ? "bg-amber-400"
+            : "bg-blue-500"
+        }`}
+        style={{
+          width: `${latencyWidth}%`,
+        }}
+      />
+
+    </div>
+
+  </div>
+)}
 
   <button
     onClick={() =>

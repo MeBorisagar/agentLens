@@ -1,6 +1,6 @@
 import { getTrace } from "@/lib/traces";
 import { TimelineEvent } from "@/components/timeline-event";
-
+import { getMaxLatency } from "@/lib/latency";
 interface Props {
   params: Promise<{
     id: string;
@@ -13,6 +13,10 @@ export default async function TraceDetailPage({
   const { id } = await params;
 
   const trace = await getTrace(id);
+
+  const maxLatency = getMaxLatency(
+  trace.events
+);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
@@ -28,10 +32,10 @@ export default async function TraceDetailPage({
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-4 gap-4 mb-8">
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <p className="text-sm text-zinc-400">
+            <div className="text-sm text-zinc-400">
              <div
   className={`inline-flex px-3 py-1 rounded-full text-sm border ${
     trace.status === "completed"
@@ -41,7 +45,7 @@ export default async function TraceDetailPage({
 >
   {trace.status}
 </div>
-            </p>
+            </div>
 
             <p className="font-semibold mt-1">
               {trace.status}
@@ -68,6 +72,22 @@ export default async function TraceDetailPage({
             </p>
           </div>
 
+         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+
+  <p className="text-sm text-zinc-400">
+    Duration
+  </p>
+
+  <p className="font-semibold mt-1">
+    {trace.events.reduce(
+      (acc, event) =>
+        acc + (event.latency_ms || 0),
+      0
+    )}{" "}
+    ms
+  </p>
+
+</div>
         </div>
 
         <div className="mt-10">
@@ -90,13 +110,16 @@ export default async function TraceDetailPage({
       </div>
     ) : (
       trace.events.map((event, index) => (
-        <TimelineEvent
-          key={event.id}
-          event={event}
-          isLast={
-            index === trace.events.length - 1
-          }
-        />
+       <TimelineEvent
+       
+  key={event.id}
+  event={event}
+  maxLatency={maxLatency}
+  isLast={
+    index === trace.events.length - 1
+  }
+  
+/>
       ))
     )}
 
