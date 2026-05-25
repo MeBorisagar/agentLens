@@ -1,12 +1,42 @@
 "use client";
 import { useTraces } from "@/hooks/use-traces";
 import { TraceCard } from "@/components/trace-card";
-
+import { useMemo, useState } from "react";
 export default function HomePage() {
  const {
   data: traces = [],
   isLoading,
 } = useTraces();
+
+const [search, setSearch] =
+  useState("");
+
+const [statusFilter, setStatusFilter] =
+  useState("all");
+
+const filteredTraces = useMemo(() => {
+  return traces.filter((trace) => {
+
+    const matchesSearch =
+      trace.agent_name
+        ?.toLowerCase()
+        .includes(search.toLowerCase()) ||
+      trace.id
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all"
+        ? true
+        : trace.status === statusFilter;
+
+    return (
+      matchesSearch &&
+      matchesStatus
+    );
+  });
+}, [traces, search, statusFilter]);
+
 
   if (isLoading) {
   return (
@@ -39,13 +69,68 @@ export default function HomePage() {
   </div>
         </div>
 
-        <div className="space-y-4">
-          {traces.map((trace) => (
+<div className="mb-8 flex flex-col md:flex-row gap-4">
+
+  <input
+    type="text"
+    placeholder="Search traces..."
+    value={search}
+    onChange={(e) =>
+      setSearch(e.target.value)
+    }
+    className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-700"
+  />
+
+  <select
+    value={statusFilter}
+    onChange={(e) =>
+      setStatusFilter(e.target.value)
+    }
+    className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-100 focus:outline-none focus:border-zinc-700"
+  >
+    <option value="all">
+      All Statuses
+    </option>
+
+    <option value="completed">
+      Completed
+    </option>
+
+    <option value="failed">
+      Failed
+    </option>
+
+    <option value="running">
+      Running
+    </option>
+
+  </select>
+
+</div>
+
+        <div className="space-y-8">
+          {filteredTraces.map((trace) => (
             <TraceCard
               key={trace.id}
               trace={trace}
             />
           ))}
+          {filteredTraces.length === 0 && (
+  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-10 text-center">
+
+    <h3 className="text-lg font-semibold text-zinc-200">
+      No traces found
+    </h3>
+
+    <p className="text-zinc-400 mt-2">
+      Try adjusting your filters.
+    </p>
+
+  </div>
+
+  
+)}
+
         </div>
       </div>
     </main>

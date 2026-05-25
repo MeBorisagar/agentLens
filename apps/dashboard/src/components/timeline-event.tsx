@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { getLatencyWidth } from "@/lib/latency";
 import { getEventStyles } from "@/lib/event-styles";
-
+import { useEffect, useRef } from "react";
 
 interface Props {
   event: TraceEvent;
@@ -24,6 +24,15 @@ export function TimelineEvent({
     const [expanded, setExpanded] =
     useState(false);
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    ref.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    });
+  }, []);
+  
   const styles = getEventStyles(
     event.event_type
   );
@@ -40,7 +49,10 @@ export function TimelineEvent({
   );
 
   return (
-    <div className="flex gap-4">
+    <div
+  ref={ref}
+  className="flex gap-4"
+>
 
       <div className="flex flex-col items-center">
 
@@ -56,7 +68,11 @@ export function TimelineEvent({
 
       <div className="flex-1 pb-8">
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-zinc-700 transition">
+        <div className={`border rounded-xl p-5 hover:border-zinc-700 transition ${
+  event.event_type === "error"
+    ? "bg-red-500/5 border-red-500/20"
+    : "bg-zinc-900 border-zinc-800"
+}`}>
 
           <div className="flex items-center justify-between">
 
@@ -72,6 +88,12 @@ export function TimelineEvent({
                 Step {event.step_number}
               </p>
             </div>
+
+            {event.event_type === "error" && (
+  <div className="mt-3 inline-flex px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+    Exception / Failure Event
+  </div>
+)}
  {event.latency_ms &&
     event.latency_ms > 1000 && (
       <div className="mt-2 inline-flex px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-xs">

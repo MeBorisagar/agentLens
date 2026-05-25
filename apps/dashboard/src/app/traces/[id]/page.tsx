@@ -1,22 +1,56 @@
-import { getTrace } from "@/lib/traces";
+"use client";
+import { useTrace } from "@/hooks/use-trace";
 import { TimelineEvent } from "@/components/timeline-event";
 import { getMaxLatency } from "@/lib/latency";
+import { use } from "react";
+import {
+  hasErrors,
+  getErrorEvents,
+  getSlowEvents,
+} from "@/lib/trace-analysis";
+
+import {
+  AlertTriangle,
+  Clock3,
+} from "lucide-react";
 interface Props {
   params: Promise<{
     id: string;
   }>;
 }
 
-export default async function TraceDetailPage({
+export default function TraceDetailPage({
   params,
 }: Props) {
-  const { id } = await params;
+  const { id } = use(params);
 
-  const trace = await getTrace(id);
+  const {
+  data: trace,
+  isLoading,
+} = useTrace(id);
+
+if (isLoading || !trace) {
+  return (
+    <main className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
+      <div className="text-zinc-400">
+        Loading trace...
+      </div>
+    </main>
+  );
+}
 
   const maxLatency = getMaxLatency(
   trace.events
 );
+
+const traceHasErrors =
+  hasErrors(trace);
+
+const errorEvents =
+  getErrorEvents(trace);
+
+const slowEvents =
+  getSlowEvents(trace);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
@@ -30,6 +64,68 @@ export default async function TraceDetailPage({
           <p className="text-gray-500 mt-2">
             Trace ID: {trace.id}
           </p>
+
+        {traceHasErrors && (
+  <div className="mb-8 bg-red-500/10 border border-red-500/20 rounded-2xl p-5">
+
+    <div className="flex items-start gap-4">
+
+      <div className="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+        <AlertTriangle className="w-5 h-5 text-red-400" />
+      </div>
+
+      <div>
+
+        <h2 className="text-lg font-semibold text-red-400">
+          Execution Failure Detected
+        </h2>
+
+        <p className="text-zinc-300 mt-1">
+          This trace contains{" "}
+          {errorEvents.length} error event(s).
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+{slowEvents.length > 0 && (
+  <div className="mb-8 bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5">
+
+    <div className="flex items-start gap-4">
+
+      <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+        <Clock3 className="w-5 h-5 text-amber-400" />
+      </div>
+
+      <div>
+
+        <h2 className="text-lg font-semibold text-amber-400">
+          Performance Warning
+        </h2>
+
+        <p className="text-zinc-300 mt-1">
+          {slowEvents.length} slow execution step(s)
+          detected.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
+        <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
+
+  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+
+  Live Trace Streaming
+
+</div>
+
         </div>
 
         <div className="grid grid-cols-4 gap-4 mb-8">
