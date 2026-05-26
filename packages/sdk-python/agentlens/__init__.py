@@ -1,0 +1,1 @@
+from agentlens.decorators import trace
