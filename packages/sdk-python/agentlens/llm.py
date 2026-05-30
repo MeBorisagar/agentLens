@@ -51,7 +51,11 @@ def log_llm_finished(
     prompt: str,
     response: str,
     latency_ms: int,
-    tokens: int = 0,
+    provider: str = "unknown",
+    prompt_tokens: int = 0,
+    completion_tokens: int = 0,
+    total_tokens: int = 0,
+    temperature: float | None = None,
 ):
     step = CURRENT_TRACE["step"]
 
@@ -59,12 +63,19 @@ def log_llm_finished(
         "event_type": "llm_call_finished",
         "step_number": step,
         "payload": {
+            "provider": provider,
             "model": model,
+
             "prompt": prompt,
             "response": response,
-            "tokens": tokens,
+
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": total_tokens,
+
+            "temperature": temperature,
         },
         "latency_ms": latency_ms,
     })
-
+    CURRENT_TRACE["total_tokens"] += total_tokens
     CURRENT_TRACE["step"] += 1    

@@ -11,7 +11,7 @@ def trace(func):
     def wrapper(*args, **kwargs):
 
         start_time = time.time()
-
+        CURRENT_TRACE["total_tokens"] = 0
         CURRENT_TRACE["events"] = []
         CURRENT_TRACE["step"] = 1
         events = CURRENT_TRACE["events"]
@@ -57,7 +57,7 @@ def trace(func):
             send_trace({
                 "agent_name": func.__name__,
                 "status": "completed",
-                "total_tokens": 0,
+                "total_tokens": CURRENT_TRACE["total_tokens"],
                 "total_cost": 0,
                 "events": events,
             })

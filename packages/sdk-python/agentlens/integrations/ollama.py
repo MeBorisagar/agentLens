@@ -32,10 +32,17 @@ def traced_chat(
     prompt = str(messages)
 
     log_llm_finished(
+    provider="ollama",
     model=model,
+
     prompt=str(messages),
     response=content,
+
     latency_ms=latency_ms,
-    )
+
+    prompt_tokens=0,
+    completion_tokens=0,
+    total_tokens=0,
+        )
 
     return response

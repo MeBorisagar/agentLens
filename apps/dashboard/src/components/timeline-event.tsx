@@ -48,6 +48,15 @@ export function TimelineEvent({
     event.event_type
   );
 
+  const isLLMEvent =
+  event.event_type ===
+    "llm_call_started" ||
+  event.event_type ===
+    "llm_call_finished";
+
+  const payload = event.payload;
+  
+  
   return (
     <div
   ref={ref}
@@ -155,13 +164,74 @@ export function TimelineEvent({
           </div>
 
          {expanded && (
-  <pre className="mt-4 bg-zinc-950 border border-zinc-800 rounded-lg p-4 overflow-auto text-sm text-zinc-300">
-    {JSON.stringify(
-      event.payload,
-      null,
-      2
-    )}
-  </pre>
+
+  isLLMEvent ? (
+
+    <div className="mt-4 bg-zinc-950 border border-zinc-800 rounded-lg p-4 text-sm">
+
+      <div className="space-y-2">
+
+        <div>
+          <span className="text-zinc-500">
+            Provider:
+          </span>{" "}
+          {payload.provider}
+        </div>
+
+        <div>
+          <span className="text-zinc-500">
+            Model:
+          </span>{" "}
+          {payload.model}
+        </div>
+
+        {payload.total_tokens !==
+          undefined && (
+          <div>
+            <span className="text-zinc-500">
+              Tokens:
+            </span>{" "}
+            {payload.total_tokens}
+          </div>
+        )}
+
+        <div className="mt-4">
+          <div className="text-zinc-500 mb-1">
+            Prompt
+          </div>
+
+          <div className="bg-zinc-900 rounded p-3">
+            {payload.prompt}
+          </div>
+        </div>
+
+        {payload.response && (
+          <div className="mt-4">
+            <div className="text-zinc-500 mb-1">
+              Response
+            </div>
+
+            <div className="bg-zinc-900 rounded p-3">
+              {payload.response}
+            </div>
+          </div>
+        )}
+
+      </div>
+
+    </div>
+
+  ) : (
+
+    <pre className="mt-4 bg-zinc-950 border border-zinc-800 rounded-lg p-4 overflow-auto text-sm text-zinc-300">
+      {JSON.stringify(
+        event.payload,
+        null,
+        2
+      )}
+    </pre>
+
+  )
 )}
 
         </div>
