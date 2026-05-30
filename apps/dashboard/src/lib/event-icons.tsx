@@ -13,7 +13,10 @@ export function getEventIcon(
     case "trace_started":
       return Play;
 
-    case "llm_call":
+    case "llm_call_started":
+      return Brain;
+      
+    case "llm_call_finished":
       return Brain;
 
     case "tool_call":

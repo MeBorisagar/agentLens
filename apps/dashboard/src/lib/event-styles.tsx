@@ -11,13 +11,13 @@ export function getEventStyles(
           "bg-blue-500/10 text-blue-400 border-blue-500/20",
       };
 
-    case "llm_call":
+    case "llm_call_started":
       return {
         iconBg:
-          "bg-violet-500/10 border-violet-500/20",
-        iconColor: "text-violet-400",
+          "bg-purple-500/10 border-purple-500/20",
+        iconColor: "text-purple-400",
         badge:
-          "bg-violet-500/10 text-violet-400 border-violet-500/20",
+          "bg-purple-500/10 text-purple-400 border-purple-500/20",
       };
 
     case "tool_call":
@@ -45,6 +45,15 @@ export function getEventStyles(
         iconColor: "text-red-400",
         badge:
           "bg-red-500/10 text-red-400 border-red-500/20",
+      };
+
+    case "llm_call_finished":
+      return {
+        iconBg:
+          "bg-violet-500/10 border-violet-500/20",
+        iconColor: "text-violet-400",
+        badge:
+          "bg-violet-500/10 text-violet-400 border-violet-500/20",
       };
 
     default:
