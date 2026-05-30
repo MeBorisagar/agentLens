@@ -16,7 +16,7 @@ class TraceCreate(BaseModel):
     session_id: UUID | None = None
     agent_name: str | None = None
     status: str = "completed"
-
+    trace_name: str | None = None
     total_tokens: int = 0
     total_cost: float = 0
 
@@ -41,6 +41,7 @@ class TraceEventResponse(BaseModel):
 class TraceResponse(BaseModel):
     id: UUID
     agent_name: str | None
+    trace_name: str | None
     status: str
 
     total_tokens: int
@@ -55,3 +56,7 @@ class TraceResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class TraceUpdate(BaseModel):
+    trace_name: str        

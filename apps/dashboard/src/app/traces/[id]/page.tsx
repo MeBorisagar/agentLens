@@ -8,6 +8,10 @@ import {
   getErrorEvents,
   getSlowEvents,
 } from "@/lib/trace-analysis";
+import { useEffect, useState } from "react";
+import {
+  useUpdateTrace,
+} from "@/hooks/use-update-trace";
 
 import {
   AlertTriangle,
@@ -29,6 +33,18 @@ export default function TraceDetailPage({
   isLoading,
 } = useTrace(id);
 
+const [traceName, setTraceName] =
+  useState("");
+
+const updateTraceMutation =
+  useUpdateTrace();
+
+  useEffect(() => {
+    if (trace?.trace_name) {
+      setTraceName(trace.trace_name);
+    }
+  }, [trace]);  
+
 if (isLoading || !trace) {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
@@ -38,6 +54,13 @@ if (isLoading || !trace) {
     </main>
   );
 }
+  // const [traceName, setTraceName] =
+  // useState(
+  //   trace.trace_name || ""
+  // );
+
+  // const updateTraceMutation =
+  //   useUpdateTrace();
 
   const maxLatency = getMaxLatency(
   trace.events
@@ -57,13 +80,48 @@ const slowEvents =
       <div className="max-w-5xl mx-auto">
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">
-            {trace.agent_name || "Unnamed Agent"}
-          </h1>
+         <h1 className="text-3xl font-bold">
+  {trace.trace_name ||
+    trace.agent_name}
+</h1>
+
+<p className="text-zinc-500 mt-1">
+  Agent: {trace.agent_name}
+</p>
 
           <p className="text-gray-500 mt-2">
             Trace ID: {trace.id}
           </p>
+
+          <div className="mt-6 flex items-center gap-3">
+
+  <input
+    value={traceName}
+    onChange={(e) =>
+      setTraceName(e.target.value)
+    }
+    placeholder="Give this trace a name"
+    className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-100 w-96"
+  />
+
+  <button
+    onClick={() =>
+      updateTraceMutation.mutate({
+        traceId: trace.id,
+        traceName,
+      })
+    }
+    disabled={
+      updateTraceMutation.isPending
+    }
+    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-50"
+  >
+    {updateTraceMutation.isPending
+      ? "Saving..."
+      : "Save"}
+  </button>
+
+</div>
 
         
         <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">

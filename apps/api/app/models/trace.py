@@ -27,6 +27,11 @@ class Trace(Base):
         nullable=True,
     )
 
+    trace_name: Mapped[str | None] = mapped_column(
+    String,
+    nullable=True,
+    )
+
     status: Mapped[str] = mapped_column(
         String,
         default="running",
@@ -62,3 +67,5 @@ class Trace(Base):
     back_populates="trace",
     cascade="all, delete-orphan",
     )
+
+   

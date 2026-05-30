@@ -22,3 +22,25 @@ export async function getTrace(
   ),
 };
 }
+
+export async function deleteTrace(
+  traceId: string
+) {
+  return api.delete(
+    `/traces/${traceId}`
+  );
+}
+
+export async function updateTraceName(
+  traceId: string,
+  traceName: string
+) {
+  const response = await api.patch(
+    `/traces/${traceId}`,
+    {
+      trace_name: traceName,
+    }
+  );
+
+  return response.data;
+}

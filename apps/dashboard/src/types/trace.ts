@@ -15,6 +15,8 @@ export interface Trace {
 
   agent_name: string | null;
 
+  trace_name?: string | null;
+
   status: string;
 
   total_tokens: number;
