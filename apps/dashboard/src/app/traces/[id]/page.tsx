@@ -65,7 +65,82 @@ const slowEvents =
             Trace ID: {trace.id}
           </p>
 
-        {traceHasErrors && (
+        
+        <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
+
+  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+
+  Live Trace Streaming
+
+</div>
+
+        </div>
+
+        <div className="grid grid-cols-4 gap-4 mb-8">
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <div className="text-sm text-zinc-400">
+              <p >
+              Trace Status
+            </p>
+
+            </div>
+           
+             <div
+  className={`inline-flex px-3 py-1 rounded-full text-sm border ${
+    trace.status === "completed"
+      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+      : "bg-red-500/10 text-red-400 border-red-500/20"
+  }`}
+>
+  {trace.status}
+</div>
+            
+
+            
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <p className="text-sm text-zinc-400">
+              Tokens
+            </p>
+
+            <p className="font-semibold mt-1">
+              {trace.total_tokens}
+            </p>
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <p className="text-sm text-gray-500">
+              Cost
+            </p>
+
+            <p className="font-semibold mt-1">
+              ${trace.total_cost}
+            </p>
+          </div>
+
+         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+
+  <p className="text-sm text-zinc-400">
+    Duration
+  </p>
+
+  <p className="font-semibold mt-1">
+    {trace.events.reduce(
+      (acc, event) =>
+        acc + (event.latency_ms || 0),
+      0
+    )}{" "}
+    ms
+  </p>
+
+</div>
+
+
+        </div>
+
+{traceHasErrors && (
   <div className="mb-8 bg-red-500/10 border border-red-500/20 rounded-2xl p-5">
 
     <div className="flex items-start gap-4">
@@ -118,73 +193,8 @@ const slowEvents =
 
   </div>
 )}
-        <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm">
 
-  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
 
-  Live Trace Streaming
-
-</div>
-
-        </div>
-
-        <div className="grid grid-cols-4 gap-4 mb-8">
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <div className="text-sm text-zinc-400">
-             <div
-  className={`inline-flex px-3 py-1 rounded-full text-sm border ${
-    trace.status === "completed"
-      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-      : "bg-red-500/10 text-red-400 border-red-500/20"
-  }`}
->
-  {trace.status}
-</div>
-            </div>
-
-            <p className="font-semibold mt-1">
-              {trace.status}
-            </p>
-          </div>
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <p className="text-sm text-zinc-400">
-              Tokens
-            </p>
-
-            <p className="font-semibold mt-1">
-              {trace.total_tokens}
-            </p>
-          </div>
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-            <p className="text-sm text-gray-500">
-              Cost
-            </p>
-
-            <p className="font-semibold mt-1">
-              ${trace.total_cost}
-            </p>
-          </div>
-
-         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
-
-  <p className="text-sm text-zinc-400">
-    Duration
-  </p>
-
-  <p className="font-semibold mt-1">
-    {trace.events.reduce(
-      (acc, event) =>
-        acc + (event.latency_ms || 0),
-      0
-    )}{" "}
-    ms
-  </p>
-
-</div>
-        </div>
 
         <div className="mt-10">
 

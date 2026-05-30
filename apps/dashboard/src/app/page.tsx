@@ -108,7 +108,8 @@ const filteredTraces = useMemo(() => {
 
 </div>
 
-        <div className="space-y-8">
+        <div className="flex flex-col gap-6">
+          
           {filteredTraces.map((trace) => (
             <TraceCard
               key={trace.id}
@@ -116,20 +117,20 @@ const filteredTraces = useMemo(() => {
             />
           ))}
           {filteredTraces.length === 0 && (
-  <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-10 text-center">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-10 text-center">
 
-    <h3 className="text-lg font-semibold text-zinc-200">
-      No traces found
-    </h3>
+                      <h3 className="text-lg font-semibold text-zinc-200">
+                        No traces found
+                      </h3>
 
-    <p className="text-zinc-400 mt-2">
-      Try adjusting your filters.
-    </p>
+                      <p className="text-zinc-400 mt-2">
+                        Try adjusting your filters.
+                      </p>
 
-  </div>
+                    </div>
 
   
-)}
+        )}
 
         </div>
       </div>

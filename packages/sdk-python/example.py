@@ -10,23 +10,7 @@ from agentlens import (
 
 from agentlens import traced_chat
 
-def fake_llm(prompt: str):
 
-    time.sleep(1)
-
-    response = (
-        f"AI response to: {prompt}"
-    )
-
-    log_llm_call(
-        model="gpt-4o",
-        prompt=prompt,
-        response=response,
-        latency_ms=1000,
-        tokens=150,
-    )
-
-    return response
 
 @trace_tool
 def web_search(query: str):

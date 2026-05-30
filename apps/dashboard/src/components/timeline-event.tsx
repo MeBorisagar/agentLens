@@ -6,6 +6,9 @@ import { useState } from "react";
 import { getLatencyWidth } from "@/lib/latency";
 import { getEventStyles } from "@/lib/event-styles";
 import { useEffect, useRef } from "react";
+import { getEventLabel }
+from "@/lib/event-labels";
+
 
 interface Props {
   event: TraceEvent;
@@ -54,8 +57,14 @@ export function TimelineEvent({
   event.event_type ===
     "llm_call_finished";
 
-  const payload = event.payload;
   
+  const payload = event.payload;
+
+
+  const isStartedEvent =
+  event.event_type.endsWith(
+    "_started"
+  );
   
   return (
     <div
@@ -88,31 +97,44 @@ export function TimelineEvent({
             <div>
               <h3 className="font-semibold text-zinc-100">
                 <div className={`mt-2 inline-flex px-2 py-1 rounded-md border text-xs ${styles.badge}`}>
-  {event.event_type}
+  {getEventLabel(
+  event.event_type
+)}
 </div>
                 
               </h3>
+
+          
 
               <p className="text-sm text-zinc-400 mt-1">
                 Step {event.step_number}
               </p>
             </div>
 
-            {event.event_type === "error" && (
+   {event.event_type === "error" && (
   <div className="mt-3 inline-flex px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
     Exception / Failure Event
   </div>
 )}
  {event.latency_ms &&
-    event.latency_ms > 1000 && (
+    event.latency_ms > 1000 && 
+    event.event_type !== "error" &&(
       <div className="mt-2 inline-flex px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
         Slow execution step
       </div>
   )}
+{event.latency_ms &&
+    event.latency_ms > -1 && event.latency_ms < 1000 &&
+    event.event_type !== "error" &&(
+      <div className="mt-2 inline-flex px-2 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+         {`Latency: ${event.latency_ms} ms`}
+      </div>
+  )}
+ 
           
             <div className="flex items-center gap-3">
 
-  {event.latency_ms && (
+  {event.latency_ms  && (
   <div className="min-w-[180px]">
 
     <div className="flex items-center justify-between mb-1">
@@ -163,7 +185,7 @@ export function TimelineEvent({
 </div>
           </div>
 
-         {expanded && (
+         {expanded && !isStartedEvent && (
 
   isLLMEvent ? (
 
