@@ -2,6 +2,7 @@
 import { useTraces } from "@/hooks/use-traces";
 import { TraceCard } from "@/components/trace-card";
 import { useMemo, useState } from "react";
+
 export default function HomePage() {
  const {
   data: traces = [],
@@ -11,31 +12,95 @@ export default function HomePage() {
 const [search, setSearch] =
   useState("");
 
+const [sortBy, setSortBy] = useState<
+  "newest" | "oldest" | "failed"
+>("newest");
+
 const [statusFilter, setStatusFilter] =
   useState("all");
 
-const filteredTraces = useMemo(() => {
-  return traces.filter((trace) => {
+const filteredAndSortedTraces = useMemo(() => {
+  const filtered = traces.filter((trace) => {
+  const query =
+    search.toLowerCase();
 
-    const matchesSearch =
-      trace.agent_name
-        ?.toLowerCase()
-        .includes(search.toLowerCase()) ||
-      trace.id
-        .toLowerCase()
-        .includes(search.toLowerCase());
+  const matchesSearch =
+    trace.agent_name
+      ?.toLowerCase()
+      .includes(query) ||
 
-    const matchesStatus =
-      statusFilter === "all"
-        ? true
-        : trace.status === statusFilter;
+    trace.trace_name
+      ?.toLowerCase()
+      .includes(query) ||
+
+    trace.id
+      .toLowerCase()
+      .includes(query);
+
+  const matchesStatus =
+    statusFilter === "all"
+      ? true
+      : trace.status === statusFilter;
+
+  return (
+    matchesSearch &&
+    matchesStatus
+  );
+});
+
+return filtered.sort((a, b) => {
+
+  if (sortBy === "newest") {
+    return (
+      new Date(
+        b.created_at
+      ).getTime() -
+      new Date(
+        a.created_at
+      ).getTime()
+    );
+  }
+
+  if (sortBy === "oldest") {
+    return (
+      new Date(
+        a.created_at
+      ).getTime() -
+      new Date(
+        b.created_at
+      ).getTime()
+    );
+  }
+
+  if (sortBy === "failed") {
+
+    if (
+      a.status === "failed" &&
+      b.status !== "failed"
+    ) {
+      return -1;
+    }
+
+    if (
+      a.status !== "failed" &&
+      b.status === "failed"
+    ) {
+      return 1;
+    }
 
     return (
-      matchesSearch &&
-      matchesStatus
+      new Date(
+        b.created_at
+      ).getTime() -
+      new Date(
+        a.created_at
+      ).getTime()
     );
-  });
-}, [traces, search, statusFilter]);
+  }
+
+  return 0;
+});
+}, [traces, search, statusFilter, sortBy]);
 
 
   if (isLoading) {
@@ -68,6 +133,8 @@ const filteredTraces = useMemo(() => {
 
   </div>
         </div>
+
+      
 
 <div className="mb-8 flex flex-col md:flex-row gap-4">
 
@@ -106,17 +173,42 @@ const filteredTraces = useMemo(() => {
 
   </select>
 
+  <select
+  value={sortBy}
+  onChange={(e) =>
+    setSortBy(
+      e.target.value as
+        | "newest"
+        | "oldest"
+        | "failed"
+    )
+  }
+  className="px-4 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-zinc-100"
+>
+  <option value="newest">
+    Newest First
+  </option>
+
+  <option value="oldest">
+    Oldest First
+  </option>
+
+  <option value="failed">
+    Failed First
+  </option>
+</select>
+
 </div>
 
         <div className="flex flex-col gap-6">
           
-          {filteredTraces.map((trace) => (
+          {filteredAndSortedTraces.map((trace) => (
             <TraceCard
               key={trace.id}
               trace={trace}
             />
           ))}
-          {filteredTraces.length === 0 && (
+          {filteredAndSortedTraces.length === 0 && (
                     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-10 text-center">
 
                       <h3 className="text-lg font-semibold text-zinc-200">
